@@ -1,21 +1,14 @@
-import { NavLink, useLocation } from "react-router-dom";
-import clsx from "clsx";
-import style from "./AuthNav.module.css";
+import { NavLink } from "react-router-dom";
+import styles from "./AuthNav.module.css";
 
 const AuthNav = () => {
-  const location = useLocation();
-  const getMenuItemClass = (to) => {
-    return to === location.pathname
-      ? clsx(style.link, style.active)
-      : style.link;
-  };
   return (
-    <div className={style.authMenu}>
-      <NavLink className={getMenuItemClass("/register")} to="/register">
-        Sign Up
+    <div className={styles.authNav}>
+      <NavLink to="/register" className={`${styles.btn} ${styles.btnPrimary}`}>
+        Register
       </NavLink>
-      <NavLink className={getMenuItemClass("/login")} to="/login">
-        Sign In
+      <NavLink to="/login" className={`${styles.btn} ${styles.btnSecondary}`}>
+        Login
       </NavLink>
     </div>
   );

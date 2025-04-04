@@ -1,41 +1,30 @@
-import css from "./SearchBox.module.css";
-import { IoCloseOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
-import { selectNameFilter } from "../../redux/filters/selectors";
-import { initialStateFilter } from "../../redux/filters/constants";
-import { changeFilter } from "../../redux/filters/filtersSlice";
-import AOS from "aos";
-import "aos/dist/aos.css";
-AOS.init();
+import { changeFilter } from "../../redux/filters/slice";
+import { selectFilterValue } from "../../redux/filters/selectors";
+import styles from "./SearchBox.module.css";
 
 const SearchBox = () => {
-  const searchValue = useSelector(selectNameFilter);
   const dispatch = useDispatch();
+  const filter = useSelector(selectFilterValue);
 
-  const handelInputSearch = (event) => {
-    dispatch(changeFilter(event.target.value));
-  };
-
-  const cleanInput = () => {
-    dispatch(changeFilter(initialStateFilter.name));
+  const handleChange = (e) => {
+    dispatch(changeFilter(e.target.value.toLowerCase()));
   };
 
   return (
-    <div data-aos="zoom-in" className={css.container}>
-      <p className={css.inputText}>Find contacts</p>
-      <div className={css.thumbInput}>
-        <input
-          className={css.formInput}
-          type="text"
-          value={searchValue}
-          onChange={handelInputSearch}
-        />
-        <IoCloseOutline
-          className={css.iconClean}
-          size="20"
-          onClick={cleanInput}
-        />
-      </div>
+    <div className={styles.container}>
+      <label htmlFor="search" className={styles.label}>
+        Find contacts by name or phone
+      </label>
+      <input
+        id="search"
+        name="search"
+        type="text"
+        value={filter}
+        onChange={handleChange}
+        className={styles.inputField}
+        autoComplete="off"
+      />
     </div>
   );
 };

@@ -1,53 +1,23 @@
-.userMenu .avatar {
-  display: none;
-}
-
-.userMenu {
+.container {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 1rem;
 }
 
-.welcomText {
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 1.1;
-  letter-spacing: -0.04em;
-  color: rgb(71, 71, 71);
+.welcomeText {
+  font-size: 1.125rem;
+  color: white;
 }
 
-.btnLogOut {
-  border-radius: 50px;
-  background-color: #e1dae9;
-  box-shadow: 0 1px 1px #00000024, 0 1px 3px #0000001f, 0 2px 1px #0003;
-  padding: 7px 20px;
-  border: none;
-  color: #00afd7;
-
-  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+.logoutButton {
+  background-color: #f87171;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-@media screen and (min-width: 768px) {
-  .userMenu .avatar {
-    display: flex;
-    background-color: #e87438;
-  }
-
-  .btnLogOut {
-    font-size: 18px;
-    padding: 10px 25px;
-  }
-
-  .btnLogOut:hover {
-    background-color: #00afd7;
-    color: #f0eafa;
-  }
-}
-
-@media screen and (min-width: 1024px) {
-  .userMenu {
-    gap: 15px;
-  }
+.logoutButton:hover {
+  background-color: #ef4444;
 }

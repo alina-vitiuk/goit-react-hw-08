@@ -1,109 +1,88 @@
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { useId } from "react";
+import { useFormik } from "formik";
 import * as Yup from "yup";
-import { BsPhone, BsPerson } from "react-icons/bs";
-
-import css from "./ContactForm.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import { addContact } from "../../redux/contacts/contactsOps";
-import { initialValues } from "../../redux/contacts/constants";
-import { selectIsAddingContact } from "../../redux/contacts/selectors";
-import { CircularProgress } from "@mui/material";
-
-export const FeedbackSchema = Yup.object().shape({
-  name: Yup.string()
-    .min(3, "Too Short!")
-    .max(50, "Too Long!")
-    .required("Required"),
-  number: Yup.string()
-    .matches(
-      /^\d{3}-\d{3}-\d{4}$/,
-      "Invalid phone number format (xxx-xxx-xxxx)"
-    )
-    .required("Required"),
-});
+import { addContact } from "../../redux/contacts/operations";
+import { selectContacts, selectError } from "../../redux/contacts/selectors";
+import styles from "./ContactForm.module.css";
 
 const ContactForm = () => {
   const dispatch = useDispatch();
-  const addingContact = useSelector(selectIsAddingContact);
+  const contacts = useSelector(selectContacts);
+  const error = useSelector(selectError);
 
-  const nameId = useId();
-  const numberId = useId();
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      number: "",
+    },
+    validationSchema: Yup.object({
+      name: Yup.string()
+        .min(3, "Мінімум 3 символи")
+        .max(50, "Максимум 50 символів")
+        .required("Обов'язкове до заповнення!"),
+      number: Yup.string()
+        .matches(/^\d+$/, "Номер телефону має містити мінімум 10 символів")
+        .min(7, "Телефонний номер має містити мінімум 7 цифр")
+        .max(15, "Телефонний номер не має містити більше ніж 15")
+        .required("Обов'язкове до заповнення!"),
+    }),
+    onSubmit: (values, { resetForm }) => {
+      const duplicate = contacts.find(
+        (contact) => contact.name.toLowerCase() === values.name.toLowerCase()
+      );
 
-  const handleSubmit = (values, actions) => {
-    dispatch(addContact(values));
-    !addingContact && actions.resetForm();
-  };
+      if (duplicate) {
+        alert(`${values.name} is already in contacts!`);
+        return;
+      }
+
+      dispatch(addContact(values));
+      resetForm();
+    },
+  });
 
   return (
-    <div
-      data-aos="fade-up"
-      data-aos-anchor-placement="top-center"
-      className={css.thumbForm}
-    >
-      <Formik
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
-        validationSchema={FeedbackSchema}
-      >
-        {({ errors, touched }) => (
-          <Form className={css.containerForm}>
-            <label className={css.formLabel} htmlFor={nameId}>
-              Name
-            </label>
+    <form onSubmit={formik.handleSubmit} className={styles.contactForm}>
+      <label htmlFor="name" className={styles.label}>
+        Name
+      </label>
+      <input
+        id="name"
+        name="name"
+        type="text"
+        className={styles.input}
+        value={formik.values.name}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        autoComplete="name"
+      />
+      {formik.touched.name && formik.errors.name ? (
+        <div className={styles.error}>{formik.errors.name}</div>
+      ) : null}
 
-            <div className={css.thumb}>
-              <Field
-                className={`${css.formInput} ${
-                  errors.name && touched.name && css.errorName
-                }`}
-                type="text"
-                name="name"
-                id={nameId}
-                placeholder="Name"
-              />
-              <BsPerson className={css.iconInput} size="20" />
-            </div>
-            <ErrorMessage
-              className={css.errorSpan}
-              name="name"
-              component="span"
-            />
+      <label htmlFor="number" className={styles.label}>
+        Number
+      </label>
+      <input
+        id="number"
+        name="number"
+        type="tel"
+        className={styles.input}
+        value={formik.values.number}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        autoComplete="tel"
+      />
+      {formik.touched.number && formik.errors.number ? (
+        <div className={styles.error}>{formik.errors.number}</div>
+      ) : null}
 
-            <label className={css.formLabel} htmlFor={numberId}>
-              Phone
-            </label>
+      {error && <div className={styles.errorMessage}>Error: {error}</div>}
 
-            <div className={css.thumb}>
-              <Field
-                className={`${css.formInput} ${
-                  errors.number && touched.number && css.errorNumber
-                }`}
-                type="text"
-                name="number"
-                id={numberId}
-                placeholder="xxx-xxx-xxxx"
-                maxLength={12}
-              />
-              <BsPhone className={css.iconInput} size="20" />
-            </div>
-            <ErrorMessage
-              className={css.errorSpan}
-              name="number"
-              component="span"
-            />
-
-            <button className={css.buttonAdd} type="submit">
-              {addingContact ? (
-                <CircularProgress className={css.progress} size={15} />
-              ) : (
-                "Add Contact"
-              )}
-            </button>
-          </Form>
-        )}
-      </Formik>
-    </div>
+      <button type="submit" className={styles.btnSubmit}>
+        Add Contact
+      </button>
+    </form>
   );
 };
 

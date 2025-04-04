@@ -1,8 +1,15 @@
-export const selectItems = (state) => state.contacts.items;
+import { createSelector } from "reselect";
+
+export const selectContacts = (state) => state.contacts.items;
+export const selectFilter = (state) => state.filters.name;
 export const selectIsLoading = (state) => state.contacts.isLoading;
 export const selectError = (state) => state.contacts.error;
-export const selectContacts = (state) => state.contacts;
-export const selectIsAddingContact = (state) => state.contacts.isAddingContact;
-export const selectIsDeletingContact = (state) =>
-  state.contacts.isDeleteContact;
-export const selectIsEditingContact = (state) => state.contacts.isEditContact;
+export const selectDeletingIds = (state) => state.contacts.deletingIds;
+
+export const selectFilteredContacts = createSelector(
+  [selectContacts, selectFilter],
+  (contacts, filter) =>
+    contacts.filter(({ name }) =>
+      name.toLowerCase().includes(filter.toLowerCase().trim())
+    )
+);

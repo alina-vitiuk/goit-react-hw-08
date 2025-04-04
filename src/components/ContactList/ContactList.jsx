@@ -1,35 +1,32 @@
-import { selectIsLoading } from "../../redux/contacts/selectors";
-import {
-  selectFilteredContacts,
-  selectNameFilter,
-} from "../../redux/filters/selectors";
-import Contact from "../Contact/Contact";
-import css from "./ContactList.module.css";
 import { useSelector } from "react-redux";
+import Contact from "../Contact/Contact";
+import { selectIsLoading, selectError } from "../../redux/contacts/selectors";
+import { selectFilterValue } from "../../redux/filters/selectors";
+import styles from "./ContactList.module.css";
 
 const ContactList = () => {
-  const filteredContacts = useSelector(selectFilteredContacts);
+  const contacts = useSelector((state) => state.contacts.items);
+  const filter = useSelector(selectFilterValue);
   const isLoading = useSelector(selectIsLoading);
-  const searchValue = useSelector(selectNameFilter);
+  const error = useSelector(selectError);
+
+  if (isLoading)
+    return (
+      <p className={styles.loadingMessage}>Loading... Please wait a little</p>
+    );
+  if (error) return <p className={styles.errorMessage}>Error: {error}</p>;
+
+  const filteredContacts = contacts.filter(
+    (contact) =>
+      contact.name.toLowerCase().includes(filter) ||
+      contact.number.includes(filter)
+  );
 
   return (
-    <div>
-      {filteredContacts.length === 0 && !isLoading && !searchValue && (
-        <p className={css.infoText}>Your phonebook is empty 😢</p>
-      )}
-
-      {filteredContacts.length > 0 && (
-        <ul className={css.listContacts}>
-          {filteredContacts.map((contact) => (
-            <li className={css.itemContact} key={contact.id}>
-              <Contact data={contact} />
-            </li>
-          ))}
-        </ul>
-      )}
-      {filteredContacts.length === 0 && searchValue && (
-        <p className={css.infoText}>No contacts found 😢</p>
-      )}
+    <div className={styles.contactListContainer}>
+      {filteredContacts.map(({ id, name, number }) => (
+        <Contact key={id} id={id} name={name} number={number} />
+      ))}
     </div>
   );
 };

@@ -1,0 +1,16 @@
+.appBar {
+  background: linear-gradient(to right, #1f2937, #6b46c1, #ec4899);
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #ec4899;
+  border-radius: 1rem;
+  color: white;
+}
+
+.appBar a {
+  color: white;
+  text-decoration: none;
+}
